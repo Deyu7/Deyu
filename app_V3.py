@@ -41,7 +41,7 @@ def load_dataset(path):
         raise FileNotFoundError(f"数据文件不存在：{path}")
 
     fmt = _detect_file_format(path)
-    st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
+    #st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
     try:
         # 优先按扩展名判断（更明确）
         ext = os.path.splitext(path)[1].lower()
