@@ -14,6 +14,20 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+st.sidebar.caption(
+    "环境版本："
+    f" numpy {np.__version__} | pandas {pd.__version__}"
+)
+try:
+    import sklearn, plotly  # noqa
+    import joblib as _joblib
+    st.sidebar.caption(
+        f" scikit-learn {sklearn.__version__} | joblib {jb.__version__}"
+    )
+except Exception:
+    pass
+
+
 # —— 安全导入：joblib 不在环境时自动回退到 pickle（仅此为新增，其他逻辑不变）
 try:
     import joblib as _joblib
