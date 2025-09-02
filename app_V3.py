@@ -161,7 +161,7 @@ def load_model(model_path: str):
 @st.cache_data(show_spinner=False)
 def load_dataset(data_path: str):
     try:
-        df = pd.read_csv(data_path, low_memory=False)
+        df = pd.read_xls(data_path, low_memory=False)
         return df
     except Exception as e:
         st.sidebar.error(f"读取数据集失败：{e}")
