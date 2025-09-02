@@ -158,16 +158,65 @@ def load_model(model_path: str):
         st.sidebar.error(msg)
         return None
 
+#数据
+# 替换你原来的读取代码为下面这段
 import os
+import traceback
 import pandas as pd
+import streamlit as st
 
-data_path = "CNAH2003_public_use.xls"  # 确认后缀和路径正确
+data_path = "CNAH2003_public_use.xls"  # 确认路径（相对于 repo 根）
+
+def detect_file_format(path):
+    with open(path, "rb") as f:
+        head = f.read(4096)
+    # XLSX (zip archive)
+    if head.startswith(b"PK\x03\x04"):
+        return "xlsx"
+    # Old BIFF Compound File (xls)
+    if head.startswith(b"\xD0\xCF\x11\xE0"):
+        return "xls"
+    # Heuristic for CSV / text: first line contains commas or tabs and ASCII letters
+    try:
+        s = head.decode("utf-8", errors="ignore")
+        first = s.splitlines()[0] if s.splitlines() else ""
+        if "," in first or "\t" in first:
+            return "csv"
+    except Exception:
+        pass
+    return None
 
 if not os.path.exists(data_path):
-    raise FileNotFoundError(f"{data_path} 不存在，请确认文件已推到 repo 且路径正确。")
+    st.error(f"数据文件不存在：{data_path}。请确认已 push 到 repo 根目录，或使用正确的相对路径。")
+    raise FileNotFoundError(data_path)
 
-# 读取 .xls 用 xlrd 引擎
-df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
+fmt = detect_file_format(data_path)
+st.write(f"Detected format: {fmt}")
+
+try:
+    if fmt == "csv" or os.path.splitext(data_path)[1].lower() == ".csv":
+        df = pd.read_csv(data_path, low_memory=False)
+    elif fmt == "xls":
+        # .xls 需要 xlrd>=2.0.1 已在 requirements.txt
+        df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
+    elif fmt == "xlsx":
+        # .xlsx 需要 openpyxl
+        df = pd.read_excel(data_path, engine="openpyxl", low_memory=False)
+    else:
+        # 兜底尝试：先用 csv，再用 excel
+        try:
+            df = pd.read_csv(data_path, low_memory=False)
+        except Exception:
+            df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
+    st.success(f"读取成功，形状：{df.shape}")
+    st.dataframe(df.head())
+except Exception as e:
+    # 在 app 页面显示友好信息，并将完整 traceback 输出到日志（streamlit 日志 / 部署日志可见）
+    st.error("读取数据集失败：详细错误已记录到日志（查看 Manage App -> Logs）。")
+    tb = traceback.format_exc()
+    print(tb)          # 会进入部署日志
+    raise
+
 
 
 def numeric_bounds(s: pd.Series):
