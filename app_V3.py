@@ -9,6 +9,9 @@
 # - 原始数据 CSV（用于计算人群均值/标准差/百分位）
 # - （可选）文本模型 pkl：pipe_text_final.pkl / pipe_text_final2.pkl
 
+import platform, streamlit as st
+st.sidebar.caption(f"Python: {platform.python_version()}")
+
 import joblib
 import streamlit as st
 import plotly.graph_objects as go
