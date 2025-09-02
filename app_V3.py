@@ -42,8 +42,6 @@ def load_dataset(path):
 
     fmt = _detect_file_format(path)
     st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
-
-
     try:
         # 优先按扩展名判断（更明确）
         ext = os.path.splitext(path)[1].lower()
@@ -62,7 +60,13 @@ def load_dataset(path):
             except Exception:
                 df = pd.read_excel(path, engine="xlrd", low_memory=False)
         return df
-    
+    except Exception as e:
+        tb = traceback.format_exc()
+        # 输出到部署日志（Streamlit 的后端日志），并在 UI 显示简短信息
+        print("load_dataset error traceback:\n", tb)
+        st.error("读取数据集失败（详细信息见部署日志）。")
+        raise
+
 
 
 
