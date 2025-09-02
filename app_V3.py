@@ -158,14 +158,17 @@ def load_model(model_path: str):
         st.sidebar.error(msg)
         return None
 
-@st.cache_data(show_spinner=False)
-def load_dataset(data_path: str):
-    try:
-        df = pd.read_excel(data_path, engine="xlrd") 
-        return df
-    except Exception as e:
-        st.sidebar.error(f"读取数据集失败：{e}")
-        return None
+import os
+import pandas as pd
+
+data_path = "CNAH2003_public_use.xls"  # 确认后缀和路径正确
+
+if not os.path.exists(data_path):
+    raise FileNotFoundError(f"{data_path} 不存在，请确认文件已推到 repo 且路径正确。")
+
+# 读取 .xls 用 xlrd 引擎
+df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
+
 
 def numeric_bounds(s: pd.Series):
     x = pd.to_numeric(s, errors="coerce")
