@@ -8,6 +8,66 @@
 # - 模型元数据 json：svm_pca_behavior_meta.json
 # - 原始数据 CSV（用于计算人群均值/标准差/百分位）
 # - （可选）文本模型 pkl：pipe_text_final.pkl / pipe_text_final2.pkl
+# ---------- START: paste this BEFORE any call to load_dataset ----------
+import os
+import traceback
+import pandas as pd
+import streamlit as st
+
+def _detect_file_format(path):
+    """Return 'csv', 'xls', 'xlsx', or None."""
+    with open(path, "rb") as f:
+        head = f.read(4096)
+    if head.startswith(b"PK\x03\x04"):
+        return "xlsx"
+    if head.startswith(b"\xD0\xCF\x11\xE0"):
+        return "xls"
+    try:
+        s = head.decode("utf-8", errors="ignore")
+        first = s.splitlines()[0] if s.splitlines() else ""
+        if "," in first or "\t" in first:
+            return "csv"
+    except Exception:
+        pass
+    return None
+
+def load_dataset(path):
+    """
+    Robust dataset loader.
+    - path: 文件路径，相对于 repo 根（或绝对路径）。
+    返回 pandas.DataFrame 或在失败时抛异常（会被 Streamlit 捕获并记录到日志）。
+    """
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"数据文件不存在：{path}")
+
+    fmt = _detect_file_format(path)
+    st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
+    try:
+        # 优先按扩展名判断（更明确）
+        ext = os.path.splitext(path)[1].lower()
+        if ext == ".csv" or fmt == "csv":
+            df = pd.read_csv(path, low_memory=False)
+        elif ext == ".xls" or fmt == "xls":
+            # 需要 xlrd>=2.0.1 在 requirements.txt 中
+            df = pd.read_excel(path, engine="xlrd", low_memory=False)
+        elif ext == ".xlsx" or fmt == "xlsx":
+            # 需要 openpyxl 在 requirements.txt 中
+            df = pd.read_excel(path, engine="openpyxl", low_memory=False)
+        else:
+            # 兜底：先试 csv，再试 excel（xlrd/openpyxl）
+            try:
+                df = pd.read_csv(path, low_memory=False)
+            except Exception:
+                df = pd.read_excel(path, engine="xlrd", low_memory=False)
+        return df
+    except Exception as e:
+        tb = traceback.format_exc()
+        # 输出到部署日志（Streamlit 的后端日志），并在 UI 显示简短信息
+        print("load_dataset error traceback:\n", tb)
+        st.error("读取数据集失败（详细信息见部署日志）。")
+        raise
+
+# ---------- END: paste this BEFORE any call to load_dataset ----------
 
 import platform, streamlit as st
 st.sidebar.caption(f"Python: {platform.python_version()}")
