@@ -1,12 +1,1 @@
---only-binary=:all:
-streamlit==1.49.1
-numpy==2.3.2
-pandas==2.3.2
-scipy==1.14.1
-scikit-learn==1.6.1
-joblib==1.4.2
-plotly==6.3.0
 
-git add requirements.txt
-git commit -m "fix: pin wheel-only deps for py3.13"
-git push
