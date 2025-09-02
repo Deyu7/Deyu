@@ -40,7 +40,7 @@ def load_dataset(path):
     if not os.path.exists(path):
         raise FileNotFoundError(f"数据文件不存在：{path}")
 
-    fmt = _detect_file_format(path)
+    #fmt = _detect_file_format(path)
     #st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
     try:
         # 优先按扩展名判断（更明确）
