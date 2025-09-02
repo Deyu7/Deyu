@@ -41,6 +41,8 @@ def load_dataset(path):
         raise FileNotFoundError(f"数据文件不存在：{path}")
 
     fmt = _detect_file_format(path)
+    st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
+
 # 不在页面显示检测信息，改为写入后端日志（便于调试但不打扰 UI）
 print(f"load_dataset: detected format => {fmt}")
 try:
