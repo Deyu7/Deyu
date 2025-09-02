@@ -61,12 +61,8 @@ try:
             except Exception:
                 df = pd.read_excel(path, engine="xlrd", low_memory=False)
         return df
-    except Exception as e:
-        tb = traceback.format_exc()
-        # 输出到部署日志（Streamlit 的后端日志），并在 UI 显示简短信息
-        print("load_dataset error traceback:\n", tb)
-        st.error("读取数据集失败（详细信息见部署日志）。")
-        raise
+    
+
 
 # ---------- END: paste this BEFORE any call to load_dataset ----------
 
