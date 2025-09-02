@@ -1,6 +1,6 @@
 # app.py — GSHS 行为问卷 · 抑郁风险预测 · 可视化
 # Usage:
-#   # 依赖在 requirements.txt 安装，不要在代码里写 pip install
+#  
 #   streamlit run app.py
 #
 # 左侧侧边栏可配置：
