@@ -1,12 +1,8 @@
---only-binary=:all:
 streamlit==1.49.1
-numpy==2.2.2
+plotly==6.3.0
 pandas==2.3.2
-scipy==1.14.1
 scikit-learn==1.6.1
+scipy==1.14.1
 joblib==1.4.2
 orjson==3.10.7
-plotly==6.3.0       # ← 重新加上
-git add requirements.txt
-git commit -m "chore: add xlrd for reading .xls"
-git push
+xlrd==2.0.1
