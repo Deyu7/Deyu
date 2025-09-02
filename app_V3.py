@@ -62,8 +62,7 @@ try:
                 df = pd.read_excel(path, engine="xlrd", low_memory=False)
         return df
     
-    fmt = _detect_file_format(path)
-    st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
+
 
 
 
