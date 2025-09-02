@@ -294,8 +294,7 @@ try:
             df = pd.read_csv(data_path, low_memory=False)
         except Exception:
             df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
-    st.success(f"读取成功，形状：{df.shape}")
-    st.dataframe(df.head())
+
 except Exception as e:
     # 在 app 页面显示友好信息，并将完整 traceback 输出到日志（streamlit 日志 / 部署日志可见）
     st.error("读取数据集失败：详细错误已记录到日志（查看 Manage App -> Logs）。")
