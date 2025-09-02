@@ -42,7 +42,7 @@ def load_dataset(path):
 
 
     fmt = _detect_file_format(path)
-    st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
+
     try:
         # 优先按扩展名判断（更明确）
         ext = os.path.splitext(path)[1].lower()
@@ -277,7 +277,7 @@ if not os.path.exists(data_path):
     raise FileNotFoundError(data_path)
 
 fmt = detect_file_format(data_path)
-st.write(f"Detected format: {fmt}")
+
 
 try:
     if fmt == "csv" or os.path.splitext(data_path)[1].lower() == ".csv":
