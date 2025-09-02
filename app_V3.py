@@ -70,32 +70,51 @@ try:
 
 # ---------- END: paste this BEFORE any call to load_dataset ----------
 
-import platform, streamlit as st
-st.sidebar.caption(f"Python: {platform.python_version()}")
-
-import joblib
-import streamlit as st
-import plotly.graph_objects as go
-import plotly.express as px
-
-
-import json, os
+# Consolidated, safe imports and environment captions
+import platform
+import os
+import json
 from pathlib import Path
+import traceback
+
 import numpy as np
 import pandas as pd
+import streamlit as st
 
-st.sidebar.caption(
-    "环境版本："
-    f" numpy {np.__version__} | pandas {pd.__version__}"
-)
+# joblib（可能不存在），统一用 _joblib 变量
 try:
-    import sklearn, plotly  # noqa
     import joblib as _joblib
-    st.sidebar.caption(
-        f" scikit-learn {sklearn.__version__} | joblib {jb.__version__}"
-    )
 except Exception:
-    pass
+    _joblib = None
+
+# sklearn / plotly 等可选依赖，优雅处理缺失情况
+try:
+    import sklearn
+    SKLEARN_VERSION = sklearn.__version__
+except Exception:
+    sklearn = None
+    SKLEARN_VERSION = None
+
+try:
+    import plotly
+    import plotly.graph_objects as go
+    import plotly.express as px
+    PLOTLY_VERSION = plotly.__version__
+except Exception:
+    plotly = None
+    go = None
+    px = None
+    PLOTLY_VERSION = None
+
+# sidebar 显示 Python / 库版本（安全拼接，不会引用未定义变量）
+st.sidebar.caption(f"Python: {platform.python_version()}")
+env_caps = f"环境版本： numpy {np.__version__} | pandas {pd.__version__}"
+if SKLEARN_VERSION:
+    env_caps += f" | scikit-learn {SKLEARN_VERSION}"
+if PLOTLY_VERSION:
+    env_caps += f" | plotly {PLOTLY_VERSION}"
+st.sidebar.caption(env_caps)
+
 
 
 # —— 安全导入：joblib 不在环境时自动回退到 pickle（仅此为新增，其他逻辑不变）
