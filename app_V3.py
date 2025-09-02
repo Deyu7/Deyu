@@ -126,7 +126,7 @@ def label_for(col_name: str) -> str:
 st.sidebar.header("⚙️ 配置 / 资源")
 model_path = st.sidebar.text_input("行为模型文件（.pkl）", "svm_pca_behavior_pipeline.pkl")
 meta_path  = st.sidebar.text_input("行为模型元数据（.json）", "svm_pca_behavior_meta.json")
-data_path  = st.sidebar.text_input("数据集 CSV（用于计算人群基线）", "CNAH2003_public_use.csv")
+data_path  = st.sidebar.text_input("数据集 CSV（用于计算人群基线）", "CNAH2003_public_use.xls")
 text_model_path = st.sidebar.text_input("（可选）文本模型（.pkl）", "")
 
 st.sidebar.markdown("---")
@@ -161,7 +161,7 @@ def load_model(model_path: str):
 @st.cache_data(show_spinner=False)
 def load_dataset(data_path: str):
     try:
-        df = pd.read_xls(data_path, low_memory=False)
+        df = pd.read_excel(data_path, engine="xlrd") 
         return df
     except Exception as e:
         st.sidebar.error(f"读取数据集失败：{e}")
