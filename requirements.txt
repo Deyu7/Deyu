@@ -1,11 +1,8 @@
+--only-binary=:all:
 streamlit==1.49.1
-pandas==2.2.2
-# 先显式安装稳定的 numpy，避免在构建 scikit-learn 时去解析预发布版
-numpy==2.0.0
-scipy>=1.10.1
-scikit-learn==1.4.2
-joblib>=1.1.0
-# 打包/构建辅助工具
-wheel
-setuptools>=65.0.0
-cython>=0.29.36
+pandas==2.2.3
+numpy==2.3.2
+scipy==1.14.1
+scikit-learn==1.6.1
+joblib==1.4.2
+plotly==6.3.0
