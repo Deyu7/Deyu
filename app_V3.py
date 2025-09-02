@@ -40,32 +40,7 @@ def load_dataset(path):
     if not os.path.exists(path):
         raise FileNotFoundError(f"数据文件不存在：{path}")
 
-  # ...之前的 detect_file_format / load_dataset 定义...
-fmt = detect_file_format(data_path)
-# 不在主页面输出检测信息，写到部署日志
-print(f"Detected format: {fmt}")
 
-try:
-    if fmt == "csv" or os.path.splitext(data_path)[1].lower() == ".csv":
-        df = pd.read_csv(data_path, low_memory=False)
-    elif fmt == "xls":
-        df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
-    elif fmt == "xlsx":
-        df = pd.read_excel(data_path, engine="openpyxl", low_memory=False)
-    else:
-        try:
-            df = pd.read_csv(data_path, low_memory=False)
-        except Exception:
-            df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
-    # 不在 UI 显示这些信息
-    print(f"读取成功，形状：{df.shape}")
-    # 如果需要调试把下面那行打开，否则注释/删除
-    # st.dataframe(df.head())
-except Exception as e:
-    st.error("读取数据集失败：详细错误已记录到日志（查看 Manage App -> Logs）。")
-    tb = traceback.format_exc()
-    print(tb)
-    raise
 
 
 
