@@ -40,32 +40,33 @@ def load_dataset(path):
     if not os.path.exists(path):
         raise FileNotFoundError(f"数据文件不存在：{path}")
 
-    #fmt = _detect_file_format(path)
-    #st.write(f"load_dataset: detected format => {fmt}")  # debug info shown in UI
-    try:
-        # 优先按扩展名判断（更明确）
-        ext = os.path.splitext(path)[1].lower()
-        if ext == ".csv" or fmt == "csv":
-            df = pd.read_csv(path, low_memory=False)
-        elif ext == ".xls" or fmt == "xls":
-            # 需要 xlrd>=2.0.1 在 requirements.txt 中
-            df = pd.read_excel(path, engine="xlrd", low_memory=False)
-        elif ext == ".xlsx" or fmt == "xlsx":
-            # 需要 openpyxl 在 requirements.txt 中
-            df = pd.read_excel(path, engine="openpyxl", low_memory=False)
-        else:
-            # 兜底：先试 csv，再试 excel（xlrd/openpyxl）
-            try:
-                df = pd.read_csv(path, low_memory=False)
-            except Exception:
-                df = pd.read_excel(path, engine="xlrd", low_memory=False)
-        return df
-    except Exception as e:
-        tb = traceback.format_exc()
-        # 输出到部署日志（Streamlit 的后端日志），并在 UI 显示简短信息
-        print("load_dataset error traceback:\n", tb)
-        st.error("读取数据集失败（详细信息见部署日志）。")
-        raise
+  # ...之前的 detect_file_format / load_dataset 定义...
+fmt = detect_file_format(data_path)
+# 不在主页面输出检测信息，写到部署日志
+print(f"Detected format: {fmt}")
+
+try:
+    if fmt == "csv" or os.path.splitext(data_path)[1].lower() == ".csv":
+        df = pd.read_csv(data_path, low_memory=False)
+    elif fmt == "xls":
+        df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
+    elif fmt == "xlsx":
+        df = pd.read_excel(data_path, engine="openpyxl", low_memory=False)
+    else:
+        try:
+            df = pd.read_csv(data_path, low_memory=False)
+        except Exception:
+            df = pd.read_excel(data_path, engine="xlrd", low_memory=False)
+    # 不在 UI 显示这些信息
+    print(f"读取成功，形状：{df.shape}")
+    # 如果需要调试把下面那行打开，否则注释/删除
+    # st.dataframe(df.head())
+except Exception as e:
+    st.error("读取数据集失败：详细错误已记录到日志（查看 Manage App -> Logs）。")
+    tb = traceback.format_exc()
+    print(tb)
+    raise
+
 
 
 
