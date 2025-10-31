@@ -134,7 +134,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 
-st.set_page_config(page_title="多模态青少年抑郁风险建模模型 ", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="多模态青少年抑郁风险预测模型 ", page_icon="🧠", layout="wide")
 
 # ========= 仅新增：把 Qxx 显示为中文题干 =========
 QUESTION_LABELS = {
@@ -391,8 +391,8 @@ if missing:
     st.warning(f"以下特征在数据集中未找到（控件将缺失，预测以缺失处理）：{missing[:12]}{' ...' if len(missing)>12 else ''}")
 
 # ========= 页面结构 =========
-st.title("🧠 多模态青少年抑郁风险建模模型 by Deyu")
-st.markdown("本应用基于预训练的机器学习模型。左侧配置 pkl/json/CSV 路径；填写问卷后生成 **概率、异常指标、z 分数、百分位、分布定位** 等可视化。")
+st.title("🧠 多模态青少年抑郁风险预测模型 by Deyu")
+st.markdown("本demo基于预训练的RNN模型。数据来源：WHO 2003 GLOBAL SCHOOL-BASED STUDENT HEALTH SURVEY。左侧配置 pkl/json/CSV 路径；填写问卷后生成 **回归概率、异常指标、z Score、Precentile、分布定位** 等可视化，结果可选导出/n By Deyu UCSD。")
 
 tab_form, tab_result = st.tabs(["行为问卷输入", "结果与可视化"])
 
